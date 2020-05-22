@@ -1,0 +1,2 @@
+[ ] jumping jacks
+[ ] stretch
