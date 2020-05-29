@@ -1,0 +1,167 @@
+Elixir
+
+pry equivalent = iex
+call an elixir program​ 	​$ ​​elixir​​ ​​hello_world.ex
+
+# require IEx; IEx.pry
+
+# IEx.configure inspect: [charlists: false] when in iex will make it so lists are printed as lists rather than CHARS
+
+
+We use the .ex extension for files we want to have compiled.
+The .exs extension is for Elixir scripts that don’t need to generate a compiled version.
+
+
+Compile  (you compile from within your iex instance
+c(“filename.ex”)  => the c function compiles the given file.
+
+
+Pure Elixir Functions
+	- Are Immutable
+	- Functions results are affected only by function arguments
+	- Function does not generate effects beyond the value it returns
+	- example: fn (n) -> n + 2
+
+Functional programming always passes the values explicitly between the functions, making clear to the developer what the inputs and outputs are.
+
+
+special operator called pipe (|>) to combine multiple functions’ calls and results. 
+
+
+Elixir Data Types
+	Literals - values humans can easily understand
+		string
+		integers
+		float
+		boolean
+		atom ie: :ok, :error, :exit
+		tuple = collections of known sizes {:ok, “Hello”}, {1,2,3}
+		list = collection of unknown size — ie: ruby array.  In Elixir, lists are linked lists.  That means each item of the collection contains a value and an implicit reference to the next element.
+		map = ruby hash created in elixir as %{key: value}.  It is also ok w/ hash_rockets in lieu of colons.
+		nil
+
+
+Actions
+	<>  => concatenates two strings
+	++ => concatenates two lists
+	and => used to evaluate booleans… item on left must be a boolean (ie: true and 1)
+	The operators &&, ||, and ! accept truthy and falsy(false or nil) values
+	&& => It returns the second expression’s value when the first is truthy; otherwise, it returns the first expression’s value.
+	|| => The || is kind of or operator that works with Booleans and values. It returns the first truthy expression; otherwise, it returns the value of the last expression. 
+
+Anonymous Functions don’t have a global name and must be bound to a variable to be used.(aka: lambdas)
+
+spawn => spawn to start a process and execute a function asynchronously. The spawn will invoke the given function asynchronously, and we can’t pass arguments to it.
+
+Closures allow us to call functions w/out using arguments because closures remember all free variables that existed at the time of the all.
+
+	​iex>​ message = ​"​​Hello, World!"​
+​ 	​iex>​ say_hello = ​fn​ -> Process.sleep(1000); IO.puts(message) ​end​
+​ 	​iex>​ spawn(say_hello)
+​ 	"Hello, World!"
+
+Named functions are defined inside of modules in Elixir. You can use an atom or aliases to name a module.  An alias in Elixir is any word that starts with a capital letter
+
+You can not bind a named_function to a variable without first wrapping it in an anonymous function.  ie:
+	CANT:  upcase = String.upcase
+	CAN: upcase = fn string -> String.upcase(string) end
+	shorthand for the CAN is:  upcase= &String.upcase/1
+
+CHAPTER 3 - PATTERN MATCHING
+
+
+you can do multiple variable bindings in Elixir
+{a, b, c} = {4,5,6}
+a = 4, b = 5, c =6
+
+You can use this logic to establish success from a data call.
+
+Example
+	process = fn -> {:success, 42} end
+
+	{:success, value} = process.()
+		- this would return valid for the first item in the tuple because :success == :success
+		- the second item in the tuple (value) would be set to the second value in the outcome of the tuple (ie: 3
+
+Integer.parse(“7 43”) — parses out the first integer it comes to in a string. It returns a tuple with the first value provided being the integer; and  the second being everything else in the string. ie: {7, “ 43”}
+
+IO.gets/1   — get user input from the terminal window.
+
+The | operator for Lists
+Pipe Operator allows us to separate some elements of the list from the rest
+
+ACCESSING A MAP
+
+map = %{a: 1, b: 2}
+Map.fetch(map, :a)
+{:ok, 1}
+
+map[:b]
+2
+
+map["non_existing_key"]
+nil
+
+As well map.a will return the value if the key exists.  otherwise, it will match error
+
+
+DATE date = ​~​D[2018-01-01]  — creates a date
+~w(c j m) — creates a a list [“c”, “j”, “m”]
+
+There is only one fundamental difference between structs and maps: The name of the struct can be used to indicate which type of structure we’re expecting. Try this in your IEx:
+iex> date = ​~​D[2018-01-01]
+	iex> %Date{​day:​ day} = date
+	iex> day
+	1
+	iex> %Date{​day:​ day} = %{​day:​ 1}
+	** (MatchError) no match of right hand side ​value:​ %{​day:​ 1}
+
+Default Values in function arguments
+	use \\
+	example:  def total_cost(price, qty \\ 10,) do: price * qty
+
+IN ELIXIR, FUNCTIONS W/ SAME NAME BUT DIFFERENT NUMBER OF PARAMETERS ARE DIFFERENT FUNCTIONS
+
+Guard Clauses
+	1. permit us to add boolean expressions in our functions, adding more power to our function clauses.
+	2. create these by using the when keyword after functions’ parameters
+	syntax:  def method(arg, arg2) when arg > arg2, do: arg
+
+
+Elixir Control Flow Structures include case statements and conditionals
+	Example: CASE
+		case x do
+			:error -> IO.puts “This is my error path”
+			IO.puts “Happy path”
+		end
+
+	Example: CONDITIONAL
+		result = cond do
+			x “is_true” -> “do this”
+			y “is_true -> “do this”
+		end
+
+
+	Example: IF/ELSE or UNLESS
+		if x “is_true” do
+			“this
+		else
+			“do this
+		end
+
+
+REQUIRING MODULES
+Code.require_file("tax_calc.ex")require does not look for files at all, the module has to be already loaded in order for it to work in the way you are trying. If you add to the top of your file Code.require_file("my_math.exs")
+
+
+CHATPER 4 - RECURSION
+
+Recursion is required in functional programs because  of immutability.
+
+Bounded Recursions - recursive function in which the success calls to itself have and end.
+
+	- thinks iterations through a list
+
+The [head | tail ] syntax is good at destructing/iterating lists; however, it can also be used to construct lists.
+
+Example  [1, [2,3]] yields [1,2,3]
